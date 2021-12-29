@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model freight {
+  organization_id     Int      @id @default(autoincrement())
+  package_id          Int      @unique
+  shipping_method     String
+  quantity            Int
+  origin_city         String
+  destination_city    String
+  is_express          Boolean  @default(false)
+  have_insurance      Boolean  @default(false)
+  total_cubage_weigth Int
+  width               Int
+  weight              Int
+  length              Int
+  height              Int
+  risk                String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
