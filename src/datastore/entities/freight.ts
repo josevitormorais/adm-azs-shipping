@@ -1,3 +1,4 @@
+import { RiskDefinition } from 'src/types/createFreightInput'
 import { Field, ID, ObjectType } from 'type-graphql'
 import {
   BaseEntity,
@@ -67,9 +68,9 @@ export class Freight extends BaseEntity {
   @Column()
   height: number
 
-  @Field()
+  @Field(() => RiskDefinition, { defaultValue: 'low' })
   @Column()
-  risk: string
+  risk: RiskDefinition
 
   @Field(() => String)
   @CreateDateColumn()

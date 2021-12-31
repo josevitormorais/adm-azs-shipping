@@ -1,7 +1,7 @@
 import { Freight } from '../datastore/entities/freight'
 import { Arg, Int, Mutation, Query, Resolver } from 'type-graphql'
-import { CreateFreightInput } from './types/createFreightInput'
-import { UpdateFreightInput } from './types/updateFreightInput'
+import { CreateFreightInput } from '../types/createFreightInput'
+import { UpdateFreightInput } from '../types/updateFreightInput'
 import { getConnection } from 'typeorm'
 
 @Resolver(Freight)
