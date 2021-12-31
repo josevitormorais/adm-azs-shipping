@@ -8,14 +8,14 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 
-@ObjectType()
 @Entity()
+@ObjectType()
 export class Freight extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number
 
-  @Field()
+  @Field({ nullable: false })
   @Column()
   organization_id: number
 

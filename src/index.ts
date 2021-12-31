@@ -1,12 +1,10 @@
 import 'reflect-metadata'
 import dotenv from 'dotenv-safe'
-import express from 'express'
-import cors from 'cors'
-import { ApolloServer } from 'apollo-server-express'
+import { ApolloServer } from 'apollo-server'
 import { buildSchema } from 'type-graphql'
-import { HelloResolver } from './resolvers/hello'
 import { createConnection } from 'typeorm'
 import { Freight } from './datastore/entities/freight'
+import { FreightResolver } from './resolvers/freightResolver'
 
 dotenv.config({ allowEmptyValues: true })
 
@@ -20,10 +18,6 @@ const {
   ENVIRONMENT,
 } = process.env
 
-const app = express()
-
-app.use(cors({ origin: '*' }))
-
 const isDevelopment = ENVIRONMENT === 'dev'
 
 async function main() {
@@ -35,19 +29,14 @@ async function main() {
     password: PG_PASSWORD,
     database: PG_DATABASE,
     entities: [Freight],
-    synchronize: true,
     logger: 'advanced-console',
     logging: isDevelopment ? 'all' : undefined,
     cache: true,
   })
 
-  // if (isDevelopment) {
-  //   await repository.runMigrations()
-  // }
-
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver],
+      resolvers: [FreightResolver],
     }),
     context: ({ req, res }) => ({
       req,
@@ -56,11 +45,11 @@ async function main() {
     }),
   })
 
-  await apolloServer.start()
-  apolloServer.applyMiddleware({ app, path: '/graphql' })
-
-  app.listen(parseInt(APP_PORT || '3000'), () => {
-    console.log(`🚀 Starting server on port: ${APP_PORT}`)
+  apolloServer.listen(parseInt(APP_PORT || '3000')).then(({ url }) => {
+    if (repository.isConnected) {
+      console.log('[POSTGRES] Database connected')
+    }
+    console.log(`🚀 Starting server on port: ${APP_PORT} and url: ${url}`)
   })
 }
 
