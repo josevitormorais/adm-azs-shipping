@@ -1,4 +1,4 @@
-import { Field, InputType, Int } from 'type-graphql'
+import { Field, InputType, Int, registerEnumType } from 'type-graphql'
 
 export enum RiskDefinition {
   high = 'high',
@@ -6,16 +6,32 @@ export enum RiskDefinition {
   medium = 'medium',
 }
 
+export enum ShippingMethod {
+  aereo = 'aereo',
+  rodoviario = 'rodoviario',
+  hidroviario = 'hidroviario',
+}
+
+registerEnumType(ShippingMethod, {
+  name: 'ShippingMethod',
+  description: 'This defines the shipping model',
+})
+
+registerEnumType(RiskDefinition, {
+  name: 'RiskDefinition',
+  description: 'This define what is possible value of risk the freight',
+})
+
 @InputType({ description: 'create a new freight to organization' })
 export class CreateFreightInput {
-  @Field()
+  @Field(() => Int)
   organization_id: number
 
   @Field(() => Int)
   package_id: number
 
-  @Field(() => String)
-  shipping_method: string
+  @Field(() => ShippingMethod)
+  shipping_method: ShippingMethod
 
   @Field(() => Int)
   quantity: number

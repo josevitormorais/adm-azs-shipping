@@ -1,13 +1,13 @@
 import { Field, InputType, Int } from 'type-graphql'
-import { RiskDefinition } from './createFreightInput'
+import { RiskDefinition, ShippingMethod } from './createFreightInput'
 
 @InputType({ description: 'update a freight from id' })
 export class UpdateFreightInput {
   @Field(() => Int, { nullable: true })
   package_id: number
 
-  @Field(() => String, { nullable: true })
-  shipping_method: string
+  @Field(() => ShippingMethod, { nullable: true })
+  shipping_method: ShippingMethod
 
   @Field(() => Int, { nullable: true })
   quantity: number

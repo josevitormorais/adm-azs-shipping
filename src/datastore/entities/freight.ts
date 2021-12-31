@@ -1,5 +1,5 @@
-import { RiskDefinition } from 'src/types/createFreightInput'
-import { Field, ID, ObjectType } from 'type-graphql'
+import { RiskDefinition, ShippingMethod } from '../../types/createFreightInput'
+import { Field, ID, Int, ObjectType } from 'type-graphql'
 import {
   BaseEntity,
   Column,
@@ -16,55 +16,54 @@ export class Freight extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Field({ nullable: false })
+  @Field(() => Int)
   @Column()
   organization_id: number
 
-  @Field()
+  @Field(() => Int)
   @Column()
   package_id: number
 
-  @Field()
+  @Field(() => ShippingMethod)
   @Column()
-  shipping_method: string
+  shipping_method: ShippingMethod
 
-  @Field()
+  @Field(() => Int)
   @Column()
   quantity: number
-
-  @Field()
+  @Field(() => String)
   @Column()
   origin_city: string
 
-  @Field()
+  @Field(() => String)
   @Column()
   destination_city: string
 
-  @Field()
+  @Field(() => Boolean)
   @Column()
   is_express: boolean
 
-  @Field()
+  @Field(() => Boolean)
   @Column()
   have_insurance: boolean
 
-  @Field()
+  @Field(() => Int)
   @Column()
   total_cubage_weigth: number
 
-  @Field()
+  @Field(() => Int)
   @Column()
   width: number
 
-  @Field()
+  @Field(() => Int)
   @Column()
   weight: number
 
-  @Field()
+  @Field(() => Int)
   @Column()
   length: number
 
-  @Field()
+  @Field(() => Int)
   @Column()
   height: number
 
