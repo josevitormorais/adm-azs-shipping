@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "nodemon --exec ts-node src/index.ts",
+    "start:dev": "nodemon",
     "typeorm": "node --require ./node_modules/ts-node/register ./node_modules/typeorm/cli.js"
   },
   "keywords": [],
