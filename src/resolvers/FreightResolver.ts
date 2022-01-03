@@ -3,34 +3,12 @@ import { Arg, Int, Mutation, Query, Resolver } from 'type-graphql'
 import { CreateFreightInput } from '../types/CreateFreightInput'
 import { UpdateFreightInput } from '../types/UpdateFreightInput'
 import { getConnection } from 'typeorm'
+import { calculateCubageFreight } from '../utils/index'
 
 const defaultCubageFactor = {
   aereo: 166.7,
   rodoviario: 300,
   hidroviario: 1000,
-}
-
-const calculateCubageFreight = (
-  height: number,
-  length: number,
-  width: number,
-  cubageFactor: number
-): number => {
-  const transformCentimetersToMeters = (value: number): number => value / 100
-  const kiloGram = 1000
-
-  const calcResult = [height, length, width].reduce(
-    (previousValue, currentValue) => {
-      if (previousValue === 0) {
-        return (previousValue = transformCentimetersToMeters(currentValue))
-      }
-      return (previousValue =
-        transformCentimetersToMeters(currentValue) * previousValue)
-    },
-    0
-  )
-
-  return Number(calcResult * cubageFactor * kiloGram)
 }
 
 @Resolver(Freight)

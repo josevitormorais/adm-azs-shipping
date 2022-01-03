@@ -8,4 +8,27 @@ function registerEnumTypeToTypeGraphql<TEnum extends object>(
   return registerEnumType(enumObj, enumConfig)
 }
 
-export { registerEnumTypeToTypeGraphql }
+const calculateCubageFreight = (
+  height: number,
+  length: number,
+  width: number,
+  cubageFactor: number
+): number => {
+  const transformCentimetersToMeters = (value: number): number => value / 100
+  const kiloGram = 1000
+
+  const calcResult = [height, length, width].reduce(
+    (previousValue, currentValue) => {
+      if (previousValue === 0) {
+        return (previousValue = transformCentimetersToMeters(currentValue))
+      }
+      return (previousValue =
+        transformCentimetersToMeters(currentValue) * previousValue)
+    },
+    0
+  )
+
+  return Number(calcResult * cubageFactor * kiloGram)
+}
+
+export { registerEnumTypeToTypeGraphql, calculateCubageFreight }
