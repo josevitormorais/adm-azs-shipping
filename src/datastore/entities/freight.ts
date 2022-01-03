@@ -25,7 +25,7 @@ export class Freight extends BaseEntity {
   package_id: number
 
   @Field(() => ShippingMethod)
-  @Column()
+  @Column({ type: 'text' })
   shipping_method: ShippingMethod
 
   @Field(() => Int)
@@ -68,7 +68,7 @@ export class Freight extends BaseEntity {
   height: number
 
   @Field(() => RiskDefinition, { defaultValue: 'low' })
-  @Column()
+  @Column({ type: 'text' })
   risk: RiskDefinition
 
   @Field(() => String)

@@ -1,3 +1,4 @@
+import { MaxLength, Min } from 'class-validator'
 import { Field, InputType, Int, registerEnumType } from 'type-graphql'
 
 export enum RiskDefinition {
@@ -33,12 +34,15 @@ export class CreateFreightInput {
   @Field(() => ShippingMethod)
   shipping_method: ShippingMethod
 
+  @Min(1)
   @Field(() => Int)
   quantity: number
 
+  @MaxLength(30)
   @Field(() => String)
   origin_city: string
 
+  @MaxLength(30)
   @Field(() => String)
   destination_city: string
 
@@ -51,15 +55,18 @@ export class CreateFreightInput {
   @Field(() => Int)
   width: number
 
+  @Min(1)
   @Field(() => Int)
   weight: number
 
+  @Min(1)
   @Field(() => Int)
   length: number
 
+  @Min(1)
   @Field(() => Int)
   height: number
 
-  @Field(() => RiskDefinition, { defaultValue: 'low' })
+  @Field(() => RiskDefinition, { defaultValue: 'low', nullable: true })
   risk: RiskDefinition
 }
