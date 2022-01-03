@@ -1,4 +1,4 @@
-import { Risk, ShippingMethod } from '../../types/enums'
+import { Risk, ShippingMethod } from '../../types/Enums'
 import { Field, ID, Int, ObjectType } from 'type-graphql'
 import {
   BaseEntity,

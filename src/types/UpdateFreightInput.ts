@@ -1,6 +1,6 @@
 import { MaxLength, Min } from 'class-validator'
 import { Field, InputType, Int } from 'type-graphql'
-import { RiskDefinition, ShippingMethod } from './createFreightInput'
+import { Risk, ShippingMethod } from './Enums'
 
 @InputType({ description: 'update a freight from id' })
 export class UpdateFreightInput {
@@ -43,6 +43,6 @@ export class UpdateFreightInput {
   @Field(() => Int, { nullable: true })
   height: number
 
-  @Field(() => RiskDefinition, { defaultValue: 'low', nullable: true })
-  risk: RiskDefinition
+  @Field(() => Risk, { defaultValue: 'low', nullable: true })
+  risk: Risk
 }

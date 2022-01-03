@@ -2,9 +2,10 @@ import 'reflect-metadata'
 import dotenv from 'dotenv-safe'
 import { ApolloServer } from 'apollo-server'
 import { buildSchema } from 'type-graphql'
-import { createConnection } from 'typeorm'
-import { Freight } from './datastore/entities/freight'
-import { FreightResolver } from './resolvers/freightResolver'
+import { Connection, createConnection } from 'typeorm'
+import { Freight } from './datastore/entities/Freight'
+import { FreightResolver } from './resolvers/FreightResolver'
+import { InternalServerError } from './errors/FormatError'
 
 dotenv.config({ allowEmptyValues: true })
 
@@ -20,8 +21,21 @@ const {
 
 const isProduction = NODE_ENV === 'production'
 
-async function main() {
-  const repository = await createConnection({
+const apolloServer = async (repository: Connection) =>
+  new ApolloServer({
+    schema: await buildSchema({
+      resolvers: [FreightResolver],
+    }),
+    context: ({ req, res }) => ({
+      req,
+      res,
+      repository: repository,
+    }),
+    formatError: InternalServerError,
+  })
+
+const databseConnection = async () =>
+  createConnection({
     type: 'postgres',
     port: Number(PG_PORT),
     host: PG_HOST,
@@ -34,30 +48,29 @@ async function main() {
     cache: true,
   })
 
-  if (!isProduction) {
-    repository
-      .runMigrations()
-      .then(() => {
-        console.log('[MIGRATION] successfully executed')
-      })
-      .catch((err) => {
-        console.log('[MIGRATION] error to run. Reason: ', err)
-        throw err
-      })
+const runningMigrations = async (isRun = false, repository: Connection) => {
+  if (!isRun) {
+    return Promise.resolve()
   }
+  return repository
+    .runMigrations()
+    .then(() => {
+      console.log('[MIGRATION] successfully executed')
+    })
+    .catch((err) => {
+      console.log('[MIGRATION] error to run. Reason: ', err)
+      throw err
+    })
+}
 
-  const apolloServer = new ApolloServer({
-    schema: await buildSchema({
-      resolvers: [FreightResolver],
-    }),
-    context: ({ req, res }) => ({
-      req,
-      res,
-      repository: repository,
-    }),
-  })
+async function main() {
+  const repository = await databseConnection()
 
-  apolloServer.listen(parseInt(APP_PORT || '3000')).then(({ url }) => {
+  runningMigrations(isProduction, repository)
+
+  const server = await apolloServer(repository)
+
+  server.listen(parseInt(APP_PORT || '3000')).then(({ url }) => {
     if (repository.isConnected) {
       console.log('[POSTGRES] Database connected')
     }

@@ -1,6 +1,6 @@
 import { MaxLength, Min } from 'class-validator'
 import { Field, InputType, Int } from 'type-graphql'
-import { Risk, ShippingMethod } from './enums'
+import { Risk, ShippingMethod } from './Enums'
 
 @InputType({ description: 'create a new freight to organization' })
 export class CreateFreightInput {

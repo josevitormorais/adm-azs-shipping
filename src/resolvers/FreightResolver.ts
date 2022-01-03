@@ -1,7 +1,7 @@
-import { Freight } from '../datastore/entities/freight'
+import { Freight } from '../datastore/entities/Freight'
 import { Arg, Int, Mutation, Query, Resolver } from 'type-graphql'
-import { CreateFreightInput } from '../types/createFreightInput'
-import { UpdateFreightInput } from '../types/updateFreightInput'
+import { CreateFreightInput } from '../types/CreateFreightInput'
+import { UpdateFreightInput } from '../types/UpdateFreightInput'
 import { getConnection } from 'typeorm'
 
 const defaultCubageFactor = {
