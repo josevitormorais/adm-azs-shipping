@@ -15,10 +15,10 @@ const {
   PG_USERNAME,
   PG_PASSWORD,
   PG_DATABASE,
-  ENVIRONMENT,
+  NODE_ENV,
 } = process.env
 
-const isDevelopment = ENVIRONMENT === 'dev'
+const isProduction = NODE_ENV === 'production'
 
 async function main() {
   const repository = await createConnection({
@@ -30,9 +30,21 @@ async function main() {
     database: PG_DATABASE,
     entities: [Freight],
     logger: 'advanced-console',
-    logging: isDevelopment ? 'all' : undefined,
+    logging: !isProduction ? 'all' : undefined,
     cache: true,
   })
+
+  if (!isProduction) {
+    repository
+      .runMigrations()
+      .then(() => {
+        console.log('[MIGRATION] successfully executed')
+      })
+      .catch((err) => {
+        console.log('[MIGRATION] error to run. Reason: ', err)
+        throw err
+      })
+  }
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
