@@ -5,7 +5,8 @@ import { buildSchema } from 'type-graphql'
 import { Connection, createConnection } from 'typeorm'
 import { Freight } from './datastore/entities/Freight'
 import { FreightResolver } from './resolvers/FreightResolver'
-import { InternalServerError } from './errors/FormatError'
+import { InternalServerError } from './errors/InternalServerError'
+import path from 'path'
 
 dotenv.config({ allowEmptyValues: true })
 
@@ -21,10 +22,16 @@ const {
 
 const isProduction = NODE_ENV === 'production'
 
+const emitSchemaFileOptions = {
+  path: path.join(__dirname, '/schema.gql'),
+  commentDescriptions: true,
+}
+
 const apolloServer = async (repository: Connection) =>
   new ApolloServer({
     schema: await buildSchema({
       resolvers: [FreightResolver],
+      emitSchemaFile: emitSchemaFileOptions,
     }),
     context: ({ req, res }) => ({
       req,
