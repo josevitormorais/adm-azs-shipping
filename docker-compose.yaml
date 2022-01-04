@@ -9,9 +9,9 @@ services:
       - POSTGRES_DB=postgres
     container_name: adm-azs-shipping
     ports:
-      - '5432:5432'
+      - 5432:5432/tcp
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - ./var/lib/postgresql/data
   postgres-test:
     image: postgres:14.1-alpine
     restart: always
@@ -21,6 +21,6 @@ services:
       - POSTGRES_DB=test
     container_name: adm-azs-shipping-test
     ports:
-      - '5433:5432'
+      - 5433:5432/tcp
     volumes:
-      - ./postgres-data-test:/var/lib/postgresql/data
+      - ./var/lib/postgresql/data

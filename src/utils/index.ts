@@ -1,5 +1,6 @@
 import { registerEnumType } from 'type-graphql'
 import { EnumConfig } from 'type-graphql/dist/decorators/types'
+import { createConnection, getConnectionOptions } from 'typeorm'
 
 function registerEnumTypeToTypeGraphql<TEnum extends object>(
   enumObj: TEnum,
@@ -29,6 +30,11 @@ const calculateCubageFreight = (
   )
 
   return Number(calcResult * cubageFactor * kiloGram)
+}
+
+export const createTypeormConn = async () => {
+  const connectionOptions = await getConnectionOptions(process.env.NODE_ENV)
+  return createConnection({ ...connectionOptions, name: 'default' })
 }
 
 export { registerEnumTypeToTypeGraphql, calculateCubageFreight }

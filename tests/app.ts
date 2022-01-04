@@ -1,3 +1,3 @@
-import { main, shutdown } from '../src/index'
+import { sever, shutdown } from '../src/index'
 
-export { main, shutdown }
+export { sever, shutdown }

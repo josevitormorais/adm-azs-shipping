@@ -1,21 +1,19 @@
 import 'reflect-metadata'
 import dotenv from 'dotenv-safe'
 import { ApolloServer } from 'apollo-server'
-import { buildSchema } from 'type-graphql'
-import { Connection, createConnection, Logger } from 'typeorm'
-import { Freight } from './datastore/entities/Freight'
-import { FreightResolver } from './resolvers/FreightResolver'
+import { Connection } from 'typeorm'
 import { InternalServerError } from './errors/InternalServerError'
-import path from 'path'
+import { createSchema } from './createSchema'
+import { createTypeormConn } from './utils'
 
 dotenv.config({ allowEmptyValues: true })
 
-type logLevel =
-  | 'advanced-console'
-  | 'simple-console'
-  | 'file'
-  | 'debug'
-  | Logger
+// type logLevel =
+//   | 'advanced-console'
+//   | 'simple-console'
+//   | 'file'
+//   | 'debug'
+//   | Logger
 
 type GraceFulShutdown = {
   app: ApolloServer
@@ -27,29 +25,21 @@ let shutdown: (done: Mocha.Done) => Promise<void>
 
 const {
   APP_PORT,
-  PG_HOST,
-  PG_PORT,
-  PG_USERNAME,
-  PG_PASSWORD,
-  PG_DATABASE,
   NODE_ENV,
-  LOG_LEVEL,
+  // PG_HOST,
+  // PG_PORT,
+  // PG_USERNAME,
+  // PG_PASSWORD,
+  // PG_DATABASE,
+  // LOG_LEVEL,
 } = process.env
 
 const isProduction = NODE_ENV === 'production'
-const isTest = NODE_ENV === 'test'
-
-const emitSchemaFileOptions = {
-  path: path.join(__dirname, '/schema.gql'),
-  commentDescriptions: true,
-}
+// const isTest = NODE_ENV === 'test'
 
 const apolloServer = async (repository: Connection) =>
   new ApolloServer({
-    schema: await buildSchema({
-      resolvers: [FreightResolver],
-      emitSchemaFile: emitSchemaFileOptions,
-    }),
+    schema: await createSchema(),
     context: ({ req, res }) => ({
       req,
       res,
@@ -59,38 +49,26 @@ const apolloServer = async (repository: Connection) =>
     stopOnTerminationSignals: true,
   })
 
-const databseConnection = async () => {
-  if (isTest) {
-    return createConnection()
-  }
-  return createConnection({
-    type: 'postgres',
-    port: Number(PG_PORT),
-    host: PG_HOST,
-    username: PG_USERNAME,
-    password: PG_PASSWORD,
-    database: PG_DATABASE,
-    entities: [Freight],
-    logger: LOG_LEVEL as logLevel,
-    logging: !isProduction ? 'all' : undefined,
-    cache: true,
-  })
-}
-
-const runMigrations = async (isRun = false, repository: Connection) => {
-  if (!isRun) {
-    return Promise.resolve()
-  }
-  return repository
-    .runMigrations()
-    .then(() => {
-      console.log('[MIGRATION] successfully executed')
-    })
-    .catch((err) => {
-      console.log('[MIGRATION] error to run. Reason: ', err)
-      throw err
-    })
-}
+// const databaseConnection = async () => {
+//   if (isTest) {
+//     return createConnection()
+//   }
+//   return createConnection({
+//     name: 'default',
+//     type: 'postgres',
+//     port: Number(PG_PORT),
+//     host: PG_HOST,
+//     username: PG_USERNAME,
+//     password: PG_PASSWORD,
+//     database: PG_DATABASE,
+//     entities: [Freight],
+//     logger: LOG_LEVEL as logLevel,
+//     logging: !isProduction ? 'all' : undefined,
+//     migrations: !isProduction
+//       ? [path.join(__dirname, './datastore/migrations/*')]
+//       : undefined,
+//   })
+// }
 
 async function appShutdown({ app, done }: GraceFulShutdown): Promise<void> {
   return app
@@ -103,13 +81,14 @@ async function appShutdown({ app, done }: GraceFulShutdown): Promise<void> {
 }
 
 async function main() {
-  const repository = await databseConnection()
+  const repository = await createTypeormConn()
 
+  if (!isProduction) {
+    await repository.runMigrations()
+  }
   if (repository.isConnected) {
     console.log('[POSTGRES] Database connected')
   }
-
-  await runMigrations(isProduction, repository)
 
   const app = await apolloServer(repository)
 
@@ -120,8 +99,8 @@ async function main() {
   shutdown = (done: Mocha.Done) => appShutdown({ repository, app, done })
 }
 
-main().catch((err) => {
+const sever = main().catch((err) => {
   console.log('Error to init application. Reason: ', err)
 })
 
-export { main, shutdown }
+export { sever, shutdown }

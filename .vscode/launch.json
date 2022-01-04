@@ -22,11 +22,14 @@
         "-r",
         "ts-node/register",
         "--timeout",
-        "6000",
+        "60000",
         "--colors",
         "${workspaceFolder}/tests/**/*.ts"
       ],
-      "skipFiles": ["<node_internals>/**"]
+      "skipFiles": ["<node_internals>/**"],
+      "env": {
+        "NODE_ENV": "test"
+      }
     }
   ]
 }

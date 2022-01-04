@@ -37,9 +37,11 @@ export class FreightResolver {
       defaultCubageFactor[shippingMethod]
     )
 
-    return Freight.create(
+    const freight = await Freight.create(
       Object.assign(data, { total_cubage_weigth: cubage })
     ).save()
+
+    return freight
   }
 
   @Mutation(() => Freight, { nullable: true })

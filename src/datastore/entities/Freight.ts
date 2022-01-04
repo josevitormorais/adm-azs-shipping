@@ -76,6 +76,6 @@ export class Freight extends BaseEntity {
   createdAt: Date
 
   @Field(() => String)
-  @UpdateDateColumn()
+  @UpdateDateColumn({ default: null })
   updatedAt: Date
 }
