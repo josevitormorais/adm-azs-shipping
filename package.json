@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --inspect --respawn --transpile-only --ignore-watch node_modules src/index.ts",
-    "test": "mocha -r ts-node/register tests/**/*.ts --exit --timeout 6s",
+    "test": "cross-env NODE_ENV=test mocha -r ts-node/register tests/**/*.ts --exit --timeout 6000",
     "build": "npm test && tsc",
     "typeorm": "node --require ./node_modules/ts-node/register ./node_modules/typeorm/cli.js"
   },
@@ -40,6 +40,7 @@
     "apollo-server-express": "^3.5.0",
     "class-validator": "^0.13.2",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv-safe": "^8.2.0",
     "express": "^4.17.2",
     "graphql": "^15.8.0",

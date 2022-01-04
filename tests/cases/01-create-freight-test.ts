@@ -1,4 +1,5 @@
 import { assert } from 'chai'
+
 describe('01-create-freight-test', () => {
   let app: any
 
@@ -11,11 +12,8 @@ describe('01-create-freight-test', () => {
     app.shutdown(done)
   })
 
-  it('running', () => {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(10), 3000)
-    }).then((response) => {
-      assert.strictEqual(response, 10)
-    })
+  it('Should server is running', async () => {
+    await new Promise((resolve) => setTimeout(() => resolve(100), 3000))
+    assert.strictEqual(app.url, process.env.APP_URL)
   })
 })

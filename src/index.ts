@@ -10,18 +10,6 @@ import path from 'path'
 
 dotenv.config({ allowEmptyValues: true })
 
-const {
-  APP_PORT,
-  PG_HOST,
-  PG_PORT,
-  PG_USERNAME,
-  PG_PASSWORD,
-  PG_DATABASE,
-  NODE_ENV,
-  LOG_LEVEL,
-} = process.env
-
-const isProduction = NODE_ENV === 'production'
 type logLevel =
   | 'advanced-console'
   | 'simple-console'
@@ -36,6 +24,20 @@ type GraceFulShutdown = {
 }
 
 let shutdown: (done: Mocha.Done) => Promise<void>
+
+const {
+  APP_PORT,
+  PG_HOST,
+  PG_PORT,
+  PG_USERNAME,
+  PG_PASSWORD,
+  PG_DATABASE,
+  NODE_ENV,
+  LOG_LEVEL,
+} = process.env
+
+const isProduction = NODE_ENV === 'production'
+const isTest = NODE_ENV === 'test'
 
 const emitSchemaFileOptions = {
   path: path.join(__dirname, '/schema.gql'),
@@ -57,8 +59,11 @@ const apolloServer = async (repository: Connection) =>
     stopOnTerminationSignals: true,
   })
 
-const databseConnection = async () =>
-  createConnection({
+const databseConnection = async () => {
+  if (isTest) {
+    return createConnection()
+  }
+  return createConnection({
     type: 'postgres',
     port: Number(PG_PORT),
     host: PG_HOST,
@@ -70,6 +75,7 @@ const databseConnection = async () =>
     logging: !isProduction ? 'all' : undefined,
     cache: true,
   })
+}
 
 const runMigrations = async (isRun = false, repository: Connection) => {
   if (!isRun) {
