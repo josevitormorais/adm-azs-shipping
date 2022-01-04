@@ -8,13 +8,6 @@ import { createTypeormConn } from './utils'
 
 dotenv.config({ allowEmptyValues: true })
 
-// type logLevel =
-//   | 'advanced-console'
-//   | 'simple-console'
-//   | 'file'
-//   | 'debug'
-//   | Logger
-
 type GraceFulShutdown = {
   app: ApolloServer
   done: Mocha.Done
@@ -23,19 +16,9 @@ type GraceFulShutdown = {
 
 let shutdown: (done: Mocha.Done) => Promise<void>
 
-const {
-  APP_PORT,
-  NODE_ENV,
-  // PG_HOST,
-  // PG_PORT,
-  // PG_USERNAME,
-  // PG_PASSWORD,
-  // PG_DATABASE,
-  // LOG_LEVEL,
-} = process.env
+const { APP_PORT, NODE_ENV } = process.env
 
 const isProduction = NODE_ENV === 'production'
-// const isTest = NODE_ENV === 'test'
 
 const apolloServer = async (repository: Connection) =>
   new ApolloServer({
@@ -48,27 +31,6 @@ const apolloServer = async (repository: Connection) =>
     formatError: InternalServerError,
     stopOnTerminationSignals: true,
   })
-
-// const databaseConnection = async () => {
-//   if (isTest) {
-//     return createConnection()
-//   }
-//   return createConnection({
-//     name: 'default',
-//     type: 'postgres',
-//     port: Number(PG_PORT),
-//     host: PG_HOST,
-//     username: PG_USERNAME,
-//     password: PG_PASSWORD,
-//     database: PG_DATABASE,
-//     entities: [Freight],
-//     logger: LOG_LEVEL as logLevel,
-//     logging: !isProduction ? 'all' : undefined,
-//     migrations: !isProduction
-//       ? [path.join(__dirname, './datastore/migrations/*')]
-//       : undefined,
-//   })
-// }
 
 async function appShutdown({ app, done }: GraceFulShutdown): Promise<void> {
   return app
